@@ -40,7 +40,7 @@ def main():
     
     distance_matrix = build_distance_matrix(point_dict)
     
-    first_start_node_idx = np.random.choice(list(point_dict.keys()))
+    first_start_node_idx = np.random.choice(list(point_dict.keys())) - 1
     second_start_node_idx = np.where(np.isinf(distance_matrix[first_start_node_idx, :]),-np.Inf, distance_matrix[first_start_node_idx, :]).argmax()
 
     first_start_node = (point_dict[first_start_node_idx].x, point_dict[first_start_node_idx].y)
