@@ -1,6 +1,7 @@
 import numpy as np
 from utils.utils import read_instances, build_distance_matrix, get_name
 from math import isnan, isinf
+from copy import deepcopy
 
 GLOBAL_PATH = 'Instances\\'
 
@@ -16,19 +17,27 @@ def greedy_cycle(distance_matrix, num, start_node_idx):
     cycle.append(np.argmin(distance_matrix[start_node_idx]))
     while len(cycle) < num:
         candidates = list()
-        for idx, check_node in enumerate(cycle):
-            distance = float('inf')
-            for best_node in range(len(distance_matrix[check_node])):
-                if isinf(distance_matrix[check_node][best_node]) or best_node in cycle:
+        candidates_costs = list()
+        for k_i in range(distance_matrix.shape[0]):
+            best_score = np.float('inf')
+            v_best = -1
+            for v_i, v in enumerate(cycle):
+                if k_i in cycle:
                     continue
-                temp = distance_matrix[check_node, best_node] + distance_matrix[best_node, cycle[(idx+1) % len(cycle)]] - distance_matrix[check_node, cycle[(idx+1) % len(cycle)]]
-                if not isnan(temp) and temp < distance:
-                    distance = temp
-                    best_node_final = best_node
-            candidates.append((idx, best_node_final, distance))
-        node = min(candidates, key = lambda el: el[2])
-        cycle = cycle[:node[0]+1] + [node[1]] + cycle[node[0]+1:]
+                if isinf(distance_matrix[v, k_i]):
+                    continue
+                v_2 = (v_i + 1) % len(cycle)
+                if isinf(distance_matrix[k_i, cycle[v_2]]):
+                    continue
+                temp = distance_matrix[v, k_i] + distance_matrix[k_i, cycle[v_2]] - distance_matrix[v, cycle[v_2]]
+                if temp < best_score and not isinf(-temp):
+                    best_score = temp
+                    v_best = v_i
+            candidates.append(v_best)
+            candidates_costs.append(best_score)
+        best = np.argmin(candidates_costs)
         
+        cycle = cycle[candidates[best] + 1:] + [best] + cycle[:candidates[best] + 1]  
     return cycle
 
 def main():
@@ -46,7 +55,7 @@ def main():
     first_start_node = (point_dict[first_start_node_idx].x, point_dict[first_start_node_idx].y)
     second_start_node = (point_dict[second_start_node_idx].x, point_dict[second_start_node_idx].y)
 
-    cycle1 = greedy_cycle(distance_matrix, num1, first_start_node_idx)
+    cycle1 = greedy_cycle(get_matrix_without_indicies(deepcopy(distance_matrix), [second_start_node_idx]), num1, first_start_node_idx)
     print(cycle1)
     distance_matrix = get_matrix_without_indicies(distance_matrix, cycle1)
     cycle2 = greedy_cycle(distance_matrix, num2, second_start_node_idx)

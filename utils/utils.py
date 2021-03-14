@@ -24,7 +24,7 @@ def read_instances(path):
                 start_reading = True
     return points
 
-def build_distance_matrix(point_dict):
+def build_distance_matrix(point_dict, replace_number = np.float('inf')):
     distance_matrix = list()
     for idx1 in range(1, len(point_dict) + 1):
         temp = list()
@@ -33,6 +33,6 @@ def build_distance_matrix(point_dict):
             if idx1 != idx2:
                 temp.append(round(distance))
             else:
-                temp.append(np.float('inf'))
+                temp.append(replace_number)
         distance_matrix.append(temp)
     return np.array(distance_matrix)

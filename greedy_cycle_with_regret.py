@@ -1,13 +1,14 @@
 import numpy as np
 from utils.utils import read_instances, build_distance_matrix, get_name
 from math import isnan, isinf
+from copy import deepcopy
 
 GLOBAL_PATH = 'Instances\\'
 
-def get_matrix_without_indicies(distance_matrix, indicies):
+def get_matrix_without_indicies(distance_matrix, indicies, replace_number = np.float('inf')):
     indicies = np.array(indicies)
     #distance_matrix[indicies, :] = np.float('inf')
-    distance_matrix[:, indicies] = np.float('inf')
+    distance_matrix[:, indicies] = replace_number
     return distance_matrix
      
 
@@ -16,31 +17,26 @@ def greedy_cycle_with_regret(distance_matrix, num, start_node_idx, k_regret = 2)
     cycle.append(np.argmin(distance_matrix[start_node_idx]))
     while len(cycle) < num:
         cost = list()
-        idxs = list()
-        for v in range(len(distance_matrix)):
-            c = list()
-            if v in cycle:
-                continue
-            for k in cycle:
-                if isinf(distance_matrix[k, v]):
+        cost_sorted = list()
+        for k_i in range(distance_matrix.shape[0]):
+            local_cost = list()
+            for v_i, v in enumerate(cycle):
+                if k_i in cycle:
                     continue
-                temp = distance_matrix[k, v] + distance_matrix[v, (k+1)%len(cycle)] - distance_matrix[k, (k+1)%len(cycle)]
-                if not isinf(temp):
-                    c.append((temp, v, k))
-            if c:
-                c = sorted(c, key = lambda el: el[0])
-                cost.append(c)
-
-        regret = list()
-        for c in cost:
-            suma = 0
-            for i in range(min(k_regret, len(c))):
-                suma += c[i][0]
-            regret.append(suma - c[0][0])
+                if isinf(distance_matrix[v, k_i]):
+                    continue
+                v_2 = (v_i + 1) % len(cycle)
+                if isinf(distance_matrix[k_i, cycle[v_2]]):
+                    continue
+                temp = distance_matrix[v, k_i] + distance_matrix[k_i, cycle[v_2]] - distance_matrix[v, cycle[v_2]]
+                local_cost.append(temp)
+            cost.append(local_cost)
+            cost_sorted.append(sorted(local_cost))
+        regret = [sum(v_cost[:k_regret]) - v_cost[0] if v_cost else 0 for v_cost in cost_sorted]
         v_best = np.argmax(regret)
-        i = cost[v_best][0][2]
-        best = cost[v_best][0][1]
-        cycle = cycle[:i+1] + [best] + cycle[i+1:]
+        e = np.argwhere(cost[v_best] == cost_sorted[v_best][0])[0][0] + 1
+        cycle = cycle[:e] + [v_best] + cycle[e:]
+
     return cycle
         
             
@@ -59,7 +55,7 @@ def main():
     first_start_node = (point_dict[first_start_node_idx].x, point_dict[first_start_node_idx].y)
     second_start_node = (point_dict[second_start_node_idx].x, point_dict[second_start_node_idx].y)
 
-    cycle1 = greedy_cycle_with_regret(get_matrix_without_indicies(distance_matrix, [second_start_node_idx]), num1, first_start_node_idx)
+    cycle1 = greedy_cycle_with_regret(get_matrix_without_indicies(deepcopy(distance_matrix), [second_start_node_idx]), num1, first_start_node_idx)
     print(cycle1)
     distance_matrix = get_matrix_without_indicies(distance_matrix, cycle1)
     cycle2 = greedy_cycle_with_regret(distance_matrix, num2, second_start_node_idx)
