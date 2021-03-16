@@ -2,7 +2,7 @@ import numpy as np
 import random
 import sys
 
-from utils.utils import plot_result
+from helpers.helpers import plot_result
 from api.instance import Instance
 from approaches.greedy_cycle.greedy_heuristic import Greedy
 
@@ -39,6 +39,8 @@ def main():
 
         list_of_solutions = list()
         best_greedy = None
+
+        times = min(times, instance.matrix.shape[0])
 
         node_to_choose = list(range(instance.matrix.shape[0]))
         for i in range(times):
