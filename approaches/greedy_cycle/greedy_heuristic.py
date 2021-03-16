@@ -10,37 +10,48 @@ class Greedy(AbstractApproach):
     def __init__(self, instance, regret = 1):
         self.instance = instance
         self.regret = regret
-        self.examples_num = np.ceil(instance.matrix.shape[0] / 2)
+        self.examples_num_first = np.ceil(instance.matrix.shape[0] / 2)
+        self.examples_num_second = instance.matrix.shape[0] - self.examples_num_first
         self.algorithm = 'Greedy Cycle'
-        self._solution = []
+        self._first_solution = list()
+        self._second_solution = list()
     
-    @property
-    def solution(self):
-        return self._solution
     
-    def solve(self, start_node):
-        self._solution = self._find_solution(start_node)
+    def solve(self, first_start_node, second_start_node):
+        self._first_solution, self._second_solution = self._find_solution(first_start_node, second_start_node)
 
-    def _find_solution(self, start_node):
-        cycle = [start_node, start_node] #z ostatniego można przejśc do pierwszego więc dodajemy obydwa w celach imitacji cyklu
+    def _find_solution(self, first_start_node, second_start_node):
+        first_cycle = [first_start_node, first_start_node] #z ostatniego można przejśc do pierwszego więc dodajemy obydwa w celach imitacji cyklu
+        second_cycle = [second_start_node, second_start_node] #z ostatniego można przejśc do pierwszego więc dodajemy obydwa w celach imitacji cyklu
 
-        while len(cycle) - 1 <= self.examples_num:
-            matrix_cost = dict()
+        while len(set(first_cycle)) < self.examples_num_first or len(set(second_cycle)) < self.examples_num_second:
+            if len(set(first_cycle)) < self.examples_num_first:
+                nodes_not_in_cycle = list(set(range(self.instance.matrix.shape[0])) - set(first_cycle) - set(second_cycle))
+                first_cycle = self._find_current_insertion(first_cycle, nodes_not_in_cycle)
+
+            if len(set(second_cycle)) < self.examples_num_second:
+                nodes_not_in_cycle = list(set(range(self.instance.matrix.shape[0])) - set(first_cycle) - set(second_cycle))
+                second_cycle = self._find_current_insertion(second_cycle, nodes_not_in_cycle)
+
+        return first_cycle, second_cycle
+
+    def _find_current_insertion(self, cycle, nodes_not_in_cycle):
+        matrix_cost = dict()
+        for idx, node_idx in enumerate(nodes_not_in_cycle):
+            local_insertion = list()
+
+            for edge_idx1 in range(len(cycle) - 1):
+                edge_idx2 = edge_idx1 + 1
+                ins_cost = self._compute_insertion_cost(node_idx = node_idx, edge_idx1 = cycle[edge_idx1], edge_idx2 = cycle[edge_idx2])
+                local_insertion.append(Insertion(node_idx, ins_cost, edge_idx1))
+
+            matrix_cost[idx] = self._sort_insertion(local_insertion)
             
-            nodes_not_in_cycle = list( set(range(self.instance.matrix.shape[0])) - set(cycle) )
-            for idx, node_idx in enumerate(nodes_not_in_cycle):
-                local_insertion = list()
+        v_best = self._find_best_insertion(matrix_cost)
+        self._insert_into_cycle(cycle, v_best)
 
-                for edge_idx1 in range(len(cycle) - 1):
-                    edge_idx2 = edge_idx1 + 1
-                    ins_cost = self._compute_insertion_cost(node_idx = node_idx, edge_idx1 = cycle[edge_idx1], edge_idx2 = cycle[edge_idx2])
-                    local_insertion.append(Insertion(node_idx, ins_cost, edge_idx1))
-
-                matrix_cost[idx] = self._sort_insertion(local_insertion)
-            
-            v_best = self._find_best_insertion(matrix_cost)
-            self._insert_into_cycle(cycle, v_best)
         return cycle
+
 
     def _sort_insertion(self, local_insertion):
         return sorted(local_insertion, key=operator.attrgetter('insertion_cost', 'node_to_insert'))

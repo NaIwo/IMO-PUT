@@ -44,26 +44,31 @@ def main():
 
         node_to_choose = list(range(instance.matrix.shape[0]))
         for i in range(times):
-            start_node = random.choice(node_to_choose)
-            node_to_choose = list( set(node_to_choose) - set([start_node]) )
+            first_start_node = random.choice(node_to_choose)
+            second_start_node = np.argmax(instance.matrix[first_start_node])
+
+            node_to_choose = list( set(node_to_choose) - set([first_start_node, second_start_node]) )
 
             greedy = Greedy(instance = instance, regret = regret)
-            greedy.solve(start_node)
+            greedy.solve(first_start_node, second_start_node)
 
-            list_of_solutions.append(greedy.compute_cost())
-            if best_greedy is None or list_of_solutions[-1] < best_greedy.compute_cost():
+            list_of_solutions.append(greedy.compute_total_cost())
+            if best_greedy is None or list_of_solutions[-1] < best_greedy.compute_total_cost():
                 best_greedy = greedy
 
 
         print(f'Instance: {instance_name}')
-        print(f'Best Path: {best_greedy.solution}')
-        print(f'Best Cost: {best_greedy.compute_cost()}')
+        print(f'Best First Path: {best_greedy.first_solution}')
+        print(f'Best Second Path: {best_greedy.second_solution}')
+        print(f'Best Cost: {best_greedy.compute_total_cost()}')
+        print()
+        print(f'Statistics: ')
         print(f'Min Cost: {min(list_of_solutions)}')
         print(f'Max Cost: {max(list_of_solutions)}')
         print(f'Average Cost: {np.mean(list_of_solutions)}')
         print()
 
-        plot_title = f'{best_greedy.algorithm}, {best_greedy.instance.instance_name}, Regret: {best_greedy.regret}, Distance: {best_greedy.compute_cost()}'
+        plot_title = f'{best_greedy.algorithm}, {best_greedy.instance.instance_name}, Regret: {best_greedy.regret}, Distance: {best_greedy.compute_total_cost()}'
         save_name = '{}-r_{}'.format(best_greedy.instance.instance_name, best_greedy.regret)
         plot_result(best_greedy, plot_title, save_name)
         
