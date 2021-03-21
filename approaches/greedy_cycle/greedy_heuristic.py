@@ -49,7 +49,6 @@ class Greedy(AbstractApproach):
             
         v_best = self._find_best_insertion(matrix_cost)
         self._insert_into_cycle(cycle, v_best)
-
         return cycle
 
 

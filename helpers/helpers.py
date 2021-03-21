@@ -3,6 +3,7 @@ import numpy as np
 from pathlib import Path
 
 SAVE_PATH = 'pictures\\{}\\{}.png'
+SAVE_PATH_TXT = 'pictures\\{}\\{}.txt'
 SAVE_DIR = 'pictures\\{}'
 
 def plot_result(solution, plot_title, save_name):
@@ -29,3 +30,8 @@ def plot_result(solution, plot_title, save_name):
 
     plt.savefig(SAVE_PATH.format(solution.algorithm, save_name))
     plt.clf()
+
+def save_string_fn(save_string, save_name, solution):
+    Path(SAVE_DIR.format(solution.algorithm)).mkdir(parents=True, exist_ok=True)
+    with open(SAVE_PATH_TXT.format(solution.algorithm, save_name), 'w') as f:
+        f.write(save_string)

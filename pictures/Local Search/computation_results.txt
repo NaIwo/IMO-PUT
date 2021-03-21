@@ -1,0 +1,209 @@
+
+Version: streepest, nodes, greedy_cycle, kroA100
+Mean: 29784.0
+Min: 29784.0
+Max: 29784.0
+
+|TIMES|
+
+Mean: 0.9508277177810669
+Min: 0.8796083927154541
+Max: 1.0220470428466797
+
+==========
+
+Version: greedy, nodes, greedy_cycle, kroA100
+Mean: 31881.0
+Min: 31546.0
+Max: 32216.0
+
+|TIMES|
+
+Mean: 0.13541853427886963
+Min: 0.07810711860656738
+Max: 0.19272994995117188
+
+==========
+
+Version: streepest, nodes, random, kroA100
+Mean: 40390.5
+Min: 40050.0
+Max: 40731.0
+
+|TIMES|
+
+Mean: 1.679234266281128
+Min: 1.5385446548461914
+Max: 1.8199238777160645
+
+==========
+
+Version: greedy, nodes, random, kroA100
+Mean: 40087.5
+Min: 37583.0
+Max: 42592.0
+
+|TIMES|
+
+Mean: 0.9631282091140747
+Min: 0.564734697341919
+Max: 1.3615217208862305
+
+==========
+
+Version: streepest, edges, greedy_cycle, kroA100
+Mean: 29784.0
+Min: 29784.0
+Max: 29784.0
+
+|TIMES|
+
+Mean: 0.7407402992248535
+Min: 0.7210118770599365
+Max: 0.7604687213897705
+
+==========
+
+Version: greedy, edges, greedy_cycle, kroA100
+Mean: 31846.0
+Min: 31476.0
+Max: 32216.0
+
+|TIMES|
+
+Mean: 0.12497270107269287
+Min: 0.062485456466674805
+Max: 0.18745994567871094
+
+==========
+
+Version: streepest, edges, random, kroA100
+Mean: 27647.0
+Min: 27640.0
+Max: 27654.0
+
+|TIMES|
+
+Mean: 1.035823941230774
+Min: 0.986720085144043
+Max: 1.0849277973175049
+
+==========
+
+Version: greedy, edges, random, kroA100
+Mean: 28591.5
+Min: 27985.0
+Max: 29198.0
+
+|TIMES|
+
+Mean: 0.5815345048904419
+Min: 0.4554169178009033
+Max: 0.7076520919799805
+
+==========
+
+Version: streepest, nodes, greedy_cycle, kroB100
+Mean: 28459.0
+Min: 28459.0
+Max: 28459.0
+
+|TIMES|
+
+Mean: 0.6840579509735107
+Min: 0.6740310192108154
+Max: 0.694084882736206
+
+==========
+
+Version: greedy, nodes, greedy_cycle, kroB100
+Mean: 31984.5
+Min: 31984.0
+Max: 31985.0
+
+|TIMES|
+
+Mean: 0.023432016372680664
+Min: 0.015621423721313477
+Max: 0.03124260902404785
+
+==========
+
+Version: streepest, nodes, random, kroB100
+Mean: 43367.5
+Min: 42852.0
+Max: 43883.0
+
+|TIMES|
+
+Mean: 1.7602477073669434
+Min: 1.462268352508545
+Max: 2.058227062225342
+
+==========
+
+Version: greedy, nodes, random, kroB100
+Mean: 38368.0
+Min: 38319.0
+Max: 38417.0
+
+|TIMES|
+
+Mean: 0.8952357769012451
+Min: 0.689777135848999
+Max: 1.1006944179534912
+
+==========
+
+Version: streepest, edges, greedy_cycle, kroB100
+Mean: 28459.0
+Min: 28459.0
+Max: 28459.0
+
+|TIMES|
+
+Mean: 0.5870212316513062
+Min: 0.5669817924499512
+Max: 0.6070606708526611
+
+==========
+
+Version: greedy, edges, greedy_cycle, kroB100
+Mean: 31985.0
+Min: 31985.0
+Max: 31985.0
+
+|TIMES|
+
+Mean: 0.015621423721313477
+Min: 0.015621185302734375
+Max: 0.015621662139892578
+
+==========
+
+Version: streepest, edges, random, kroB100
+Mean: 28820.5
+Min: 28723.0
+Max: 28918.0
+
+|TIMES|
+
+Mean: 0.9319146871566772
+Min: 0.7967417240142822
+Max: 1.0670876502990723
+
+==========
+
+Version: greedy, edges, random, kroB100
+Mean: 29326.0
+Min: 29264.0
+Max: 29388.0
+
+|TIMES|
+
+Mean: 0.5709313154220581
+Min: 0.5484821796417236
+Max: 0.5933804512023926
+
+==========
+
