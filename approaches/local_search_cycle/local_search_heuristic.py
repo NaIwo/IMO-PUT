@@ -106,22 +106,6 @@ class LocalSearch(AbstractApproach):
                     break
         return result
 
-    def _greedy_local_search(self):
-        check_first = True
-        check_second = True
-        total_best_cost = self.compute_total_cost()
-
-        while check_first or check_second:
-            if check_first:
-                self._first_solution, total_best_cost, check_first = self._intraclass_computation(total_best_cost, self._first_solution, self._second_solution)
-            interclass_output, total_best_cost = self._interclass_computation(total_best_cost)
-            check_first = check_first or interclass_output
-
-            if check_second:
-                self._second_solution, total_best_cost, check_second = self._intraclass_computation(total_best_cost, self._second_solution, self._first_solution)
-            interclass_output, total_best_cost = self._interclass_computation(total_best_cost)
-            check_second = check_second or interclass_output
-
 
     def _replace_nodes_between_cycles(self, first_cycle_node, second_cycle_node, first_cycle, second_cycle, currenct_cost):
         first_index = first_cycle.index(first_cycle_node)
