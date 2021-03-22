@@ -7,12 +7,17 @@ from api.insertion import Insertion
 
 class Greedy(AbstractApproach):
 
-    def __init__(self, instance, regret = 1):
+    def __init__(self, instance, regret = 1, neighbour = False):
         self.instance = instance
         self.regret = regret
         self.examples_num_first = np.ceil(instance.matrix.shape[0] / 2)
         self.examples_num_second = instance.matrix.shape[0] - self.examples_num_first
-        self.algorithm = 'Greedy Cycle'
+        self.neighbour = neighbour
+        if neighbour:
+            self.algorithm = f'Nearest Neighbour'
+            self.regret = 0
+        else:
+            self.algorithm = f'Greedy Cycle'
         self._first_solution = list()
         self._second_solution = list()
     
@@ -40,7 +45,7 @@ class Greedy(AbstractApproach):
         for idx, node_idx in enumerate(nodes_not_in_cycle):
             local_insertion = list()
 
-            for edge_idx1 in range(len(cycle) - 1):
+            for edge_idx1 in range((self.neighbour * (len(cycle) - 2)), len(cycle) - 1):
                 edge_idx2 = edge_idx1 + 1
                 ins_cost = self._compute_insertion_cost(node_idx = node_idx, edge_idx1 = cycle[edge_idx1], edge_idx2 = cycle[edge_idx2])
                 local_insertion.append(Insertion(node_idx, ins_cost, edge_idx1))
