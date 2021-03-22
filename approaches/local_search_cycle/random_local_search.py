@@ -28,27 +28,35 @@ class RandomLocalSearch(AbstractApproach):
         check_first = True
         check_second = True
         total_best_cost = self.compute_total_cost()
-
         start = time.time()
 
         while time.time() - start < computation_time:
-            method = random.choice([0, 1, 2])
+            #method = random.choice([0, 1, 2])
+            method = random.choice([0, 1])
             if method == 0:
-                self._first_solution, self._second_solution = self._replace_nodes_between_cycles(random.choice(self._first_solution), \
-                                                    random.choice(self._second_solution), \
-                                                    self._first_solution, self._second_solution)
+                self._first_solution, self._second_solution = self._replace_nodes_between_cycles(random.choice(self._first_solution[:-1]), \
+                                                    random.choice(self._second_solution[:-1]), \
+                                                    self._first_solution[:], self._second_solution[:])
             if method == 1:
                 cycle = random.choice([0, 1])
                 if cycle == 0:
-                    self._first_solution = self._replace_nodes_inside_cycle(random.choice(self._first_solution), random.choice(self._first_solution),  self._first_solution)
+                    node1 = random.choice(self._first_solution[:-1])
+                    node2 = random.choice(list(set(self._first_solution[:-1]) - set([node1])))
+                    self._first_solution = self._replace_nodes_inside_cycle(node1, node2,  self._first_solution[:])
                 else:
-                    self._second_solution = self._replace_nodes_inside_cycle(random.choice(self._second_solution), random.choice(self._second_solution),  self._second_solution)
+                    node1 = random.choice(self._second_solution[:-1])
+                    node2 = random.choice(list(set(self._second_solution[:-1]) - set([node1])))
+                    self._second_solution = self._replace_nodes_inside_cycle(node1, node2,  self._second_solution[:])
             if method == 2:
                 cycle = random.choice([0, 1])
                 if cycle == 0:
-                    self._first_solution = self._replace_edges_inside_cycle(random.choice(self._first_solution), random.choice(self._first_solution),  self._first_solution)
+                    node1 = random.choice(self._first_solution[:-1])
+                    node2 = random.choice(list(set(self._first_solution[:-1]) - set([node1])))
+                    self._first_solution = self._replace_edges_inside_cycle(node1, node2,  self._first_solution[:])
                 else:
-                    self._second_solution = self._replace_edges_inside_cycle(random.choice(self._second_solution), random.choice(self._second_solution),  self._second_solution)
+                    node1 = random.choice(self._second_solution[:-1])
+                    node2 = random.choice(list(set(self._second_solution[:-1]) - set([node1])))
+                    self._second_solution = self._replace_edges_inside_cycle(node1, node2,  self._second_solution[:])
 
 
     def _replace_nodes_between_cycles(self, first_cycle_node, second_cycle_node, first_cycle, second_cycle):
@@ -67,7 +75,8 @@ class RandomLocalSearch(AbstractApproach):
         first_index = cycle.index(first_node)
         second_index = cycle.index(second_node)
 
-        cycle[first_index], cycle[second_index] = second_node, first_node
+        cycle[first_index] = second_node
+        cycle[second_index] = first_node
         cycle[-1] = cycle[0]
 
         return cycle

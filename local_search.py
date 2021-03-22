@@ -47,16 +47,17 @@ def main():
         instance = Instance(name = instance_name)
         instance.compute_matrix()
         
-        ##Get greedy solution
-        first_start_node = 92 if instance_name == 'kroA100' else 72 #Najlepsze startowe wierzchołki dla intsancji Greedy (poprzednie zadanie)
+        first_start_node = random.choice(list(instance.point_dict.keys()))
         second_start_node = np.argmax(instance.matrix[first_start_node])
-        greedy_cycle = Greedy(instance, regret = 2)
+
+        ##Get greedy solution
+        #first_start_node = 92 if instance_name == 'kroA100' else 72 #Najlepsze startowe wierzchołki dla intsancji Greedy (poprzednie zadanie)
+        greedy_cycle = Greedy(instance, regret = 0)
         greedy_cycle.solve(first_start_node, second_start_node)
 
-        for _ in range(times_number):
+        for number in range(times_number):
+            print(f'Iteration number: {number+1}')
             #Get random solution
-            first_start_node = random.choice(list(instance.point_dict.keys()))
-            second_start_node = np.argmax(instance.matrix[first_start_node])
             random_cycle = Random(instance, seed = None)
             random_cycle.solve(first_start_node, second_start_node)
             #plot_random(random_cycle)
@@ -123,13 +124,13 @@ def main():
             scores[f'greedy, edges, random, {instance_name}'].append(deepcopy(local_search))
     
     save_string = '\n'
-    worst_time = float('inf')
+    worst_time = float('-inf')
     for key in scores.keys():
         best = min(scores[key], key=lambda el: el.compute_total_cost())
         costs = list( map(lambda el: el.compute_total_cost(), scores[key]) )
         save_string += f'Version: {key}\nMean: {np.mean(costs)}\nMin: {min(costs)}\nMax: {max(costs)}\n\n|TIMES|\n'
         save_string += f'\nMean: {np.mean(times[key])}\nMin: {min(times[key])}\nMax: {max(times[key])}\n\n==========\n\n'
-        if np.mean(times[key]) < worst_time:
+        if np.mean(times[key]) > worst_time:
             worst_time = np.mean(times[key])
         plot_best(best, key)
     

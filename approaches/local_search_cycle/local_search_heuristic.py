@@ -21,11 +21,14 @@ class LocalSearch(AbstractApproach):
     
     def solve(self, method = 'steepest'):
         if self._first_solution is not None and self._second_solution is not None:
-            return self._find_solution(method)
+            if method == 'steepest':
+                return self._steepest_solution(method)
+            elif method == 'greedy':
+                return self._greedy_solution(method)
         else:
             print(f'Ustaw wartości cykli.')
 
-    def _find_solution(self, method):
+    def _greedy_solution(self, method):
         check_first = True
         check_second = True
         total_best_cost = self.compute_total_cost()
@@ -34,9 +37,8 @@ class LocalSearch(AbstractApproach):
         start = time.time()
 
         while check_first or check_second:
-            if method == 'greedy':
-                #random.seed(42)
-                random.shuffle(order)
+            #random.seed(42)
+            random.shuffle(order)
 
             for key in order:
                 if check_first and key == 'intraclass':
@@ -74,12 +76,51 @@ class LocalSearch(AbstractApproach):
                         check_first = False
                         check_second = False 
         return time.time() - start
+
+
+    def _steepest_solution(self, method):
+        check_first = True
+        check_second = True
+        total_best_cost = self.compute_total_cost()
+        
+        start = time.time()
+
+        while check_first or check_second:
+
+            if check_first:
+                local_results = list()
+                local_results += self._intraclass_computation(best_cost=total_best_cost, checked_cycle=self._first_solution, computation_cycle=self._second_solution, method=method)
+                local_results += self._interclass_computation(best_cost=total_best_cost, method=method)
+                if local_results:
+                    min_replacement = min(local_results, key=operator.attrgetter('score'))
+                    self._first_solution, self._second_solution = min_replacement.first_cycle, min_replacement.second_cycle
+                    total_best_cost = min_replacement.score
+                    check_second = True
+                else:
+                    check_first = False
+            
+            if check_second:
+                local_results = list()
+                local_results += self._intraclass_computation(best_cost=total_best_cost, checked_cycle=self._second_solution, computation_cycle=self._first_solution, method=method)
+                local_results += self._interclass_computation(best_cost=total_best_cost, method=method)
+                if local_results:
+                    min_replacement = min(local_results, key=operator.attrgetter('score'))
+                    self._second_solution, self._first_solution = min_replacement.first_cycle, min_replacement.second_cycle
+                    total_best_cost = min_replacement.score
+                    check_first = True
+                else:
+                    check_second = False   
+        return time.time() - start
         
 
 
     def _intraclass_computation(self, best_cost, checked_cycle, computation_cycle, method):
         result = list()
-        for (node1, node2) in combinations(checked_cycle[:-1], r = 2):
+        nodes_combination = list(combinations(checked_cycle[:-1], r = 2))
+        if method == 'greedy':
+            random.shuffle(nodes_combination)
+
+        for (node1, node2) in nodes_combination:
             if self.neighborhood == 'nodes':
                 temp_solution, temp_cost = self._replace_nodes_inside_cycle(node1, node2, checked_cycle[:], best_cost)
                 if temp_cost < best_cost:   
@@ -98,7 +139,12 @@ class LocalSearch(AbstractApproach):
 
     def _interclass_computation(self, best_cost, method):
         result = list()
-        for (node1, node2) in product(self._first_solution[:-1], self._second_solution[:-1]):
+
+        nodes_product = list(product(self._first_solution[:-1], self._second_solution[:-1]))
+        if method == 'greedy':
+            random.shuffle(nodes_product)
+
+        for (node1, node2) in nodes_product:
             temp_first_solution, temp_second_solution, temp_cost = self._replace_nodes_between_cycles(node1, node2, self._first_solution[:], self._second_solution[:], best_cost)
             if temp_cost < best_cost:   
                 result.append( Replacement(temp_first_solution, temp_second_solution, temp_cost) )
