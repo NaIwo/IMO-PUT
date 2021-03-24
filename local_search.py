@@ -47,15 +47,16 @@ def main():
         instance = Instance(name = instance_name)
         instance.compute_matrix()
         
-        first_start_node = random.choice(list(instance.point_dict.keys()))
-        second_start_node = np.argmax(instance.matrix[first_start_node])
-
-        ##Get greedy solution
-        #first_start_node = 92 if instance_name == 'kroA100' else 72 #Najlepsze startowe wierzchołki dla intsancji Greedy (poprzednie zadanie)
-        greedy_cycle = Greedy(instance, regret = 0)
-        greedy_cycle.solve(first_start_node, second_start_node)
 
         for number in range(times_number):
+            first_start_node = random.choice(list(instance.point_dict.keys()))
+            second_start_node = np.argmax(instance.matrix[first_start_node])
+
+            ##Get greedy solution
+            #first_start_node = 92 if instance_name == 'kroA100' else 72 #Najlepsze startowe wierzchołki dla intsancji Greedy (poprzednie zadanie)
+            greedy_cycle = Greedy(instance, regret = 0)
+            greedy_cycle.solve(first_start_node, second_start_node)
+            
             print(f'Iteration number: {number+1}')
             #Get random solution
             random_cycle = Random(instance, seed = None)
