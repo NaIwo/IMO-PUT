@@ -1,5 +1,6 @@
 import numpy as np
 import operator
+import time
 
 from approaches.abstract_approach import AbstractApproach
 from api.instance import Instance
@@ -23,7 +24,10 @@ class Greedy(AbstractApproach):
     
     
     def solve(self, first_start_node, second_start_node):
+        start = time.time()
         self._first_solution, self._second_solution = self._find_solution(first_start_node, second_start_node)
+        end = time.time()
+        return end - start
 
     def _find_solution(self, first_start_node, second_start_node):
         first_cycle = [first_start_node, first_start_node] #z ostatniego można przejśc do pierwszego więc dodajemy obydwa w celach imitacji cyklu

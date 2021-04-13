@@ -66,12 +66,12 @@ def main():
             #Local Search
             local_search = LocalSearch(instance)
 
-            #streepest, nodes, greedy_cycle
+            #steepest, nodes, greedy_cycle
             local_search.first_solution = greedy_cycle.first_solution
             local_search.second_solution = greedy_cycle.second_solution
             time = local_search.solve(method = 'steepest')
-            times[f'streepest, nodes, greedy_cycle, {instance_name}'].append(time)
-            scores[f'streepest, nodes, greedy_cycle, {instance_name}'].append(deepcopy(local_search))
+            times[f'steepest, nodes, greedy_cycle, {instance_name}'].append(time)
+            scores[f'steepest, nodes, greedy_cycle, {instance_name}'].append(deepcopy(local_search))
 
             #greedy, nodes, greedy_cycle
             local_search.first_solution = greedy_cycle.first_solution
@@ -80,12 +80,12 @@ def main():
             times[f'greedy, nodes, greedy_cycle, {instance_name}'].append(time)
             scores[f'greedy, nodes, greedy_cycle, {instance_name}'].append(deepcopy(local_search))
 
-            #streepest, nodes, random
+            #steepest, nodes, random
             local_search.first_solution = random_cycle.first_solution
             local_search.second_solution = random_cycle.second_solution
             time = local_search.solve(method = 'steepest')
-            times[f'streepest, nodes, random, {instance_name}'].append(time)
-            scores[f'streepest, nodes, random, {instance_name}'].append(deepcopy(local_search))
+            times[f'steepest, nodes, random, {instance_name}'].append(time)
+            scores[f'steepest, nodes, random, {instance_name}'].append(deepcopy(local_search))
 
             #greedy, nodes, random
             local_search.first_solution = random_cycle.first_solution
@@ -96,12 +96,12 @@ def main():
 
             local_search.neighborhood = 'edges' 
 
-            #streepest, edges, greedy_cycle
+            #steepest, edges, greedy_cycle
             local_search.first_solution = greedy_cycle.first_solution
             local_search.second_solution = greedy_cycle.second_solution
             time = local_search.solve(method = 'steepest')
-            times[f'streepest, edges, greedy_cycle, {instance_name}'].append(time)
-            scores[f'streepest, edges, greedy_cycle, {instance_name}'].append(deepcopy(local_search))
+            times[f'steepest, edges, greedy_cycle, {instance_name}'].append(time)
+            scores[f'steepest, edges, greedy_cycle, {instance_name}'].append(deepcopy(local_search))
 
             #greedy, edges, greedy_cycle
             local_search.first_solution = greedy_cycle.first_solution
@@ -110,12 +110,12 @@ def main():
             times[f'greedy, edges, greedy_cycle, {instance_name}'].append(time)
             scores[f'greedy, edges, greedy_cycle, {instance_name}'].append(deepcopy(local_search))
 
-            #streepest, edges, random
+            #steepest, edges, random
             local_search.first_solution = random_cycle.first_solution
             local_search.second_solution = random_cycle.second_solution
             time = local_search.solve(method = 'steepest')
-            times[f'streepest, edges, random, {instance_name}'].append(time)
-            scores[f'streepest, edges, random, {instance_name}'].append(deepcopy(local_search))
+            times[f'steepest, edges, random, {instance_name}'].append(time)
+            scores[f'steepest, edges, random, {instance_name}'].append(deepcopy(local_search))
 
             #greedy, edges, random
             local_search.first_solution = random_cycle.first_solution
@@ -136,7 +136,7 @@ def main():
         plot_best(best, key)
     
     print(save_string)
-    save_string_fn(save_string, 'computation_results', best)
+    save_string_fn(save_string, 'computation_results', best.algorithm)
 
     for instance_name in ['kroA100', 'kroB100']:
         instance = Instance(name = instance_name)

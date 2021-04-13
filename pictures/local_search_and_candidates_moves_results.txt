@@ -1,0 +1,40 @@
+
+Version: greedy, regret 0, kroA200
+Mean: 35745.0
+Min: 35745.0
+Max: 35745.0
+
+|TIMES|
+
+Mean: 1.6874513626098633
+Min: 1.6874513626098633
+Max: 1.6874513626098633
+
+==========
+
+Version: steepest, edges, random, kroA200
+Mean: 39443.0
+Min: 39443.0
+Max: 39443.0
+
+|TIMES|
+
+Mean: 27.406864166259766
+Min: 27.406864166259766
+Max: 27.406864166259766
+
+==========
+
+Version: steepest with LM, edges, random, kroA200
+Mean: 41101.0
+Min: 41101.0
+Max: 41101.0
+
+|TIMES|
+
+Mean: 2.6260383129119873
+Min: 2.6260383129119873
+Max: 2.6260383129119873
+
+==========
+

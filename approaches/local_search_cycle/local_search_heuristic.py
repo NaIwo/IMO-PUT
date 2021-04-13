@@ -4,6 +4,7 @@ import operator
 import time
 from itertools import combinations, product
 
+from approaches.local_search_cycle import cycle_operations
 from approaches.abstract_approach import AbstractApproach
 from api.replacement import Replacement
 
@@ -102,7 +103,7 @@ class LocalSearch(AbstractApproach):
             if check_second:
                 local_results = list()
                 local_results += self._intraclass_computation(best_cost=total_best_cost, checked_cycle=self._second_solution, computation_cycle=self._first_solution, method=method)
-                local_results += self._interclass_computation(best_cost=total_best_cost, method=method)
+                local_results += self._interclass_computation(best_cost=total_best_cost, method=method, replace=True)
                 if local_results:
                     min_replacement = min(local_results, key=operator.attrgetter('score'))
                     self._second_solution, self._first_solution = min_replacement.first_cycle, min_replacement.second_cycle
@@ -122,14 +123,14 @@ class LocalSearch(AbstractApproach):
 
         for (node1, node2) in nodes_combination:
             if self.neighborhood == 'nodes':
-                temp_solution, temp_cost = self._replace_nodes_inside_cycle(node1, node2, checked_cycle[:], best_cost)
+                temp_solution, temp_cost = cycle_operations.replace_nodes_inside_cycle(self, node1, node2, checked_cycle[:], best_cost)
                 if temp_cost < best_cost:   
                     result.append( Replacement(temp_solution, computation_cycle, temp_cost) )
                     if method == 'greedy':
                         break
 
             if self.neighborhood == 'edges':
-                temp_solution, temp_cost = self._replace_edges_inside_cycle(node1, node2, checked_cycle[:], best_cost)
+                temp_solution, temp_cost = cycle_operations.replace_edges_inside_cycle(self, node1, node2, checked_cycle[:], best_cost)
                 if temp_cost < best_cost: 
                     result.append( Replacement(temp_solution, computation_cycle, temp_cost) )
                     if method == 'greedy':
@@ -145,87 +146,9 @@ class LocalSearch(AbstractApproach):
             random.shuffle(nodes_product)
 
         for (node1, node2) in nodes_product:
-            temp_first_solution, temp_second_solution, temp_cost = self._replace_nodes_between_cycles(node1, node2, self._first_solution[:], self._second_solution[:], best_cost)
+            temp_first_solution, temp_second_solution, temp_cost = cycle_operations.replace_nodes_between_cycles(self, node1, node2, self._first_solution[:], self._second_solution[:], best_cost)
             if temp_cost < best_cost:   
-                result.append( Replacement(temp_first_solution, temp_second_solution, temp_cost) )
+                result.append( Replacement(temp_second_solution, temp_first_solution, temp_cost) )
                 if method == 'greedy':
                     break
         return result
-
-
-    def _replace_nodes_between_cycles(self, first_cycle_node, second_cycle_node, first_cycle, second_cycle, currenct_cost):
-        first_index = first_cycle.index(first_cycle_node)
-        second_index = second_cycle.index(second_cycle_node)
-
-        c1 = first_cycle[:-1]
-        c2 = second_cycle[:-1]
-        length1 = len(c1)
-        length2 = len(c2)
-        new_cost = currenct_cost - (self.instance.matrix[c1[first_index-1], c1[first_index]] +\
-                                    self.instance.matrix[c1[first_index], c1[(first_index+1) % length1]] +\
-                                    self.instance.matrix[c2[second_index-1], c2[second_index]] +\
-                                    self.instance.matrix[c2[second_index], c2[(second_index+1) % length2]]) +\
-                                    (self.instance.matrix[c1[first_index-1], c2[second_index]] +\
-                                    self.instance.matrix[c2[second_index], c1[(first_index+1) % length1]] +\
-                                    self.instance.matrix[c2[second_index-1], c1[first_index]] +\
-                                    self.instance.matrix[c1[first_index], c2[(second_index+1) % length2]])
-        
-        first_cycle[first_index] = second_cycle_node
-        second_cycle[second_index] = first_cycle_node
-
-        first_cycle[-1] = first_cycle[0]
-        second_cycle[-1] = second_cycle[0]
-
-        return first_cycle, second_cycle, new_cost
-
-    def _replace_nodes_inside_cycle(self, first_node, second_node, cycle, currenct_cost):
-        first_index = cycle.index(first_node)
-        second_index = cycle.index(second_node)
-        c = cycle[:-1]
-        length = len(c)
-        if first_index == 0 and second_index == length-1:
-            new_cost = currenct_cost - (self.instance.matrix[c[second_index-1], c[second_index]] + \
-                                        self.instance.matrix[c[first_index], c[(first_index+1) % length]]) + \
-                                        (self.instance.matrix[c[second_index-1], c[first_index]] + \
-                                        self.instance.matrix[c[second_index], c[(first_index+1) % length]])
-        elif second_index - first_index == 1:
-            new_cost = currenct_cost - (self.instance.matrix[c[first_index-1], c[first_index]] + \
-                                        self.instance.matrix[c[second_index], c[(second_index+1) % length]]) + \
-                                        (self.instance.matrix[c[first_index-1], c[second_index]] + \
-                                        self.instance.matrix[c[first_index], c[(second_index+1) % length]])
-        else:
-            new_cost = currenct_cost - (self.instance.matrix[c[first_index-1], c[first_index]] + \
-                                    self.instance.matrix[c[first_index], c[(first_index+1) % length]] + \
-                                    self.instance.matrix[c[second_index-1], c[second_index]] + \
-                                    self.instance.matrix[c[second_index], c[(second_index+1) % length]]) + \
-                                    (self.instance.matrix[c[first_index-1], c[second_index]] + \
-                                    self.instance.matrix[c[second_index], c[(first_index+1) % length]] + \
-                                    self.instance.matrix[c[second_index-1], c[first_index]] + \
-                                    self.instance.matrix[c[first_index], c[(second_index+1) % length]])
-
-        cycle[first_index], cycle[second_index] = second_node, first_node
-        cycle[-1] = cycle[0]
-
-        return cycle, new_cost
-
-    def _replace_edges_inside_cycle(self, first_node, second_node, cycle, currenct_cost):
-        first_index = cycle.index(first_node) 
-        second_index = cycle.index(second_node) 
-        part_of_cycle = cycle[first_index:second_index]
-        part_of_cycle = part_of_cycle[::-1]
-
-        c = cycle[:-1]
-        new_cost = currenct_cost - (self.instance.matrix[c[first_index-1], c[first_index]] +\
-                                    self.instance.matrix[c[second_index-1], c[second_index]] ) +\
-                                    (self.instance.matrix[c[first_index-1], c[second_index-1]] +\
-                                    self.instance.matrix[c[first_index], c[second_index]] )
-
-        cycle = cycle[:first_index] + part_of_cycle + cycle[second_index:]
-        cycle[-1] = cycle[0]
-        return cycle, new_cost
-
-
-
-    
-
-
