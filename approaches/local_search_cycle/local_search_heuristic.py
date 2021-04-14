@@ -138,7 +138,7 @@ class LocalSearch(AbstractApproach):
         
         return result
 
-    def _interclass_computation(self, best_cost, method):
+    def _interclass_computation(self, best_cost, method, replace = False):
         result = list()
 
         nodes_product = list(product(self._first_solution[:-1], self._second_solution[:-1]))
@@ -148,7 +148,10 @@ class LocalSearch(AbstractApproach):
         for (node1, node2) in nodes_product:
             temp_first_solution, temp_second_solution, temp_cost = cycle_operations.replace_nodes_between_cycles(self, node1, node2, self._first_solution[:], self._second_solution[:], best_cost)
             if temp_cost < best_cost:   
-                result.append( Replacement(temp_second_solution, temp_first_solution, temp_cost) )
+                if replace:
+                    result.append( Replacement(temp_second_solution, temp_first_solution, temp_cost) )
+                else:
+                    result.append( Replacement(temp_first_solution, temp_second_solution, temp_cost) )
                 if method == 'greedy':
                     break
         return result

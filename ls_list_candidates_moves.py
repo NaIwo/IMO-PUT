@@ -39,7 +39,7 @@ def main():
     times = defaultdict(list)
     scores = defaultdict(list)
     
-    for instance_name in ['kroA100']:
+    for instance_name in ['kroA200', 'kroB200']:
         instance = Instance(name = instance_name)
         instance.compute_matrix()
 
@@ -68,10 +68,10 @@ def main():
             #steepest, edges, random
             local_search.first_solution = random_cycle.first_solution[:]
             local_search.second_solution = random_cycle.second_solution[:]
-            #time = local_search.solve(method = 'steepest')
+            time = local_search.solve(method = 'steepest')
             times[f'steepest, edges, random, {instance_name}'].append(time)
             scores[f'steepest, edges, random, {instance_name}'].append(deepcopy(local_search))
-            print(time)
+            
             ##################################################################
             #LocalSearchWithList
             local_search_with_list = LocalSearchWithList(instance)
@@ -80,10 +80,9 @@ def main():
             #steepest with LM,, edges, random
             local_search_with_list.first_solution = random_cycle.first_solution[:]
             local_search_with_list.second_solution = random_cycle.second_solution[:]
-            #time = local_search_with_list.solve()
+            time = local_search_with_list.solve()
             times[f'steepest with LM, edges, random, {instance_name}'].append(time)
             scores[f'steepest with LM, edges, random, {instance_name}'].append(deepcopy(local_search_with_list))
-            print(time)
 
             ##################################################################
             #LocalSearchCandidateMoves
@@ -93,10 +92,9 @@ def main():
             #candidates moves, random
             ls_candidates_moves.first_solution = random_cycle.first_solution[:]
             ls_candidates_moves.second_solution = random_cycle.second_solution[:]
-            time = ls_candidates_moves.solve(n_candidats = 2)
+            time = ls_candidates_moves.solve(n_candidats = 8)
             times[f'Candidates moves, random, {instance_name}'].append(time)
             scores[f'Candidates moves, random, {instance_name}'].append(deepcopy(ls_candidates_moves))
-            print(time)
 
     
     save_string = '\n'
