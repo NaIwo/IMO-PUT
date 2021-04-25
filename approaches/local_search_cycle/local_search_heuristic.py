@@ -23,9 +23,9 @@ class LocalSearch(AbstractApproach):
     def solve(self, method = 'steepest'):
         if self._first_solution is not None and self._second_solution is not None:
             if method == 'steepest':
-                return self._steepest_solution(method)
+                return self._steepest_solution(method)[0]
             elif method == 'greedy':
-                return self._greedy_solution(method)
+                return self._greedy_solution(method)[0]
         else:
             print(f'Ustaw wartości cykli.')
 
@@ -76,17 +76,18 @@ class LocalSearch(AbstractApproach):
                     else:
                         check_first = False
                         check_second = False 
-        return time.time() - start
+        return time.time() - start, total_best_cost
 
 
-    def _steepest_solution(self, method):
+    def _steepest_solution(self, method, max_time = float('inf'), total_best_cost = None):
         check_first = True
         check_second = True
-        total_best_cost = self.compute_total_cost()
+        if total_best_cost is None:
+            total_best_cost = self.compute_total_cost()
         
         start = time.time()
 
-        while check_first or check_second:
+        while (check_first or check_second) and (time.time() - start < max_time):
 
             if check_first:
                 local_results = list()
@@ -111,9 +112,8 @@ class LocalSearch(AbstractApproach):
                     check_first = True
                 else:
                     check_second = False   
-        return time.time() - start
+        return time.time() - start, total_best_cost
         
-
 
     def _intraclass_computation(self, best_cost, checked_cycle, computation_cycle, method):
         result = list()
@@ -155,3 +155,5 @@ class LocalSearch(AbstractApproach):
                 if method == 'greedy':
                     break
         return result
+
+
