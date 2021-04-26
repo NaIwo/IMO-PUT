@@ -94,17 +94,17 @@ class LocalSearchWithList(AbstractApproach):
 
     def _get_lists_update_after_interclass(self, total_best_cost, candidate, local_results_first, local_results_second):
         self._intraclass_computation(best_cost=total_best_cost, checked_cycle=self._second_solution, \
-                                            computation_cycle=self._first_solution, new_node = candidate.node1, result=local_results_second, main_cycle='_second_solution')
+                                            computation_cycle=None, new_node = candidate.node1, result=local_results_second, main_cycle='_second_solution')
         self._intraclass_computation(best_cost=total_best_cost, checked_cycle=self._first_solution, \
-                            computation_cycle=self._second_solution, new_node = candidate.node2, result=local_results_first)
+                            computation_cycle=None, new_node = candidate.node2, result=local_results_first)
         self._interclass_computation(best_cost=total_best_cost, new_node1=candidate.node1, new_node2=candidate.node2, result = local_results_first)
         self._interclass_computation(best_cost=total_best_cost, new_node1=candidate.node1, new_node2=candidate.node2, result = local_results_second)
     
     def _get_lists_update_after_intraclass(self, total_best_cost, candidate, local_results, main_cycle = '_second_solution'):
         self._intraclass_computation(best_cost=total_best_cost, checked_cycle=getattr(self, main_cycle), \
-                                            computation_cycle=self._first_solution, new_node = candidate.node2, result=local_results, main_cycle=main_cycle)
+                                            computation_cycle=None, new_node = candidate.node2, result=local_results, main_cycle=main_cycle)
         self._intraclass_computation(best_cost=total_best_cost, checked_cycle=getattr(self, main_cycle), \
-                            computation_cycle=self._second_solution, new_node = candidate.node1, result=local_results)
+                            computation_cycle=None, new_node = candidate.node1, result=local_results, main_cycle=main_cycle)
 
         self._interclass_computation(best_cost=total_best_cost, new_node1=candidate.node1, new_node2=candidate.node2, result = local_results, main_cycle = main_cycle)
 
@@ -146,7 +146,7 @@ class LocalSearchWithList(AbstractApproach):
                 if temp_cost < best_cost:   
                     result.add( Replacement(None, None, temp_cost, node1, node2, 'interclass') )
 
-            nodes_product = list(product([new_node1], self._second_solution[:-1]))
+            nodes_product = list(product([new_node2], self._second_solution[:-1]))
             for (node1, node2) in nodes_product:
                 _, _, temp_cost = cycle_operations.replace_nodes_between_cycles(self, node1, node2, self._first_solution[:], self._second_solution[:], best_cost)
                 if temp_cost < best_cost:   
