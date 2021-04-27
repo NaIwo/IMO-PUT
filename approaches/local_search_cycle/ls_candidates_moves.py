@@ -24,15 +24,18 @@ class LocalSearchCandidateMoves(AbstractApproach):
     
     def solve(self, n_candidats):
         if self._first_solution is not None and self._second_solution is not None:
-            return self._steepest_solution(n_candidats)
+            return self._steepest_solution(n_candidats)[0]
         else:
             print(f'Ustaw wartości cykli.')
 
 
-    def _steepest_solution(self, n_candidats):
+    def _steepest_solution(self, n_candidats, max_time = float('inf'), total_best_cost = None):
         check_first = True
         check_second = True
-        self.total_best_cost = self.compute_total_cost()
+        if total_best_cost is None:
+            self.total_best_cost = self.compute_total_cost()
+        else:
+            self.total_best_cost = total_best_cost
         
         start = time.time()
 
@@ -40,7 +43,7 @@ class LocalSearchCandidateMoves(AbstractApproach):
         for node in range(len(self.instance.matrix)):
             nearest_neighbours[node] = np.argsort(self.instance.matrix[node])[1:n_candidats+1]
         
-        while check_first or check_second:
+        while (check_first or check_second) and (time.time() - start < max_time):
 
             if check_first:
                 check_first = False
@@ -76,7 +79,7 @@ class LocalSearchCandidateMoves(AbstractApproach):
                 if candidates:
                     check_second = True
                     self._save_candidate(min(candidates))
-        return time.time() - start
+        return time.time() - start, self.total_best_cost
         
     def _get_which_solution(self, node, sorted_neighbours):
         solutions = dict()
