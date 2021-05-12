@@ -1,0 +1,53 @@
+
+Version: SteadyState + LS, kroA200
+Mean: 32159.6
+Min: 31426.0
+Max: 33019.0
+
+|TIMES|
+
+Mean: 733.316617155075
+Min: 733.0182013511658
+Max: 734.0790250301361
+
+==========
+
+Version: SteadyState - LS, kroA200
+Mean: 34468.2
+Min: 33927.0
+Max: 34957.0
+
+|TIMES|
+
+Mean: 733.6874923229218
+Min: 733.2851903438568
+Max: 734.4467639923096
+
+==========
+
+Version: SteadyState + LS, kroB200
+Mean: 32516.6
+Min: 32074.0
+Max: 32959.0
+
+|TIMES|
+
+Mean: 733.1751537322998
+Min: 733.0021181106567
+Max: 733.7606143951416
+
+==========
+
+Version: SteadyState - LS, kroB200
+Mean: 34991.8
+Min: 34697.0
+Max: 35285.0
+
+|TIMES|
+
+Mean: 734.0678398132325
+Min: 733.5279734134674
+Max: 734.5152747631073
+
+==========
+

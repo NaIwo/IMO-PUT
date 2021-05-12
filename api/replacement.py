@@ -16,13 +16,25 @@ class Replacement():
     def first_cycle(self):
         return self._first_cycle
 
+    @first_cycle.setter
+    def first_cycle(self, first_cycle):
+        self._first_cycle = first_cycle
+
     @property
     def second_cycle(self):
         return self._second_cycle
+
+    @second_cycle.setter
+    def second_cycle(self, second_cycle):
+        self._second_cycle = second_cycle
     
     @property
     def score(self):
         return self._score
+
+    @score.setter
+    def score(self, score):
+        self._score = score
     
     @property
     def node1(self):
@@ -50,4 +62,7 @@ class Replacement():
         return self._score < other.score
 
     def __eq__(self, other):
-        return self._score == other.score
+        if isinstance(other, Replacement):
+            return set(self._first_cycle) == set(other._first_cycle) and set(self._second_cycle) == set(other._second_cycle) and self._score == other.score
+        else:
+            return self._score == other.score
