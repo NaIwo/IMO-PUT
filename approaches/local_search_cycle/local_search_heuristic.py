@@ -79,14 +79,17 @@ class LocalSearch(AbstractApproach):
         return time.time() - start, total_best_cost
 
 
-    def _steepest_solution(self, method):
+    def _steepest_solution(self, method, max_time = float('inf'), total_best_cost = None):
         check_first = True
         check_second = True
-        total_best_cost = self.compute_total_cost()
+        if total_best_cost is None:
+            total_best_cost = self.compute_total_cost()
+        else:
+            total_best_cost = total_best_cost
         
         start = time.time()
 
-        while check_first or check_second:
+        while (check_first or check_second) and (time.time() - start < max_time):
 
             if check_first:
                 local_results = list()
